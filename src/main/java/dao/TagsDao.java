@@ -73,4 +73,25 @@ public class TagsDao {
             return receiptsRecordList;
         }
     }
+    public TagsRecord getTag(int receiptId, String tagName){
+        System.out.println("Getting tag for receiptId:"+receiptId+"tagName: "+tagName);
+        return dsl.selectFrom(TAGS).where(TAGS.RECEIPT_ID.eq(receiptId)).and(TAGS.TAG.eq(tagName)).fetchOne();
+    }
+
+    // add delete fun here
+    public void delete(String tagName, int receiptId){
+        // delete record from tags where name = tagName and receipt_id = receiptId
+        dsl.delete(TAGS)
+                .where(TAGS.TAG.eq(tagName).and(TAGS.RECEIPT_ID.eq(receiptId)))
+                .execute();
+    }
+//    public int removeTag(TagsRecord tagRecord){
+//        // return 9;
+//        return tagRecord.delete(); // not working
+//    }
+
+    public List<TagsRecord> getTagsForReceipt(int receiptId){
+        return dsl.selectFrom(TAGS).where(TAGS.RECEIPT_ID.eq(receiptId)).fetch();
+    }
+
 }

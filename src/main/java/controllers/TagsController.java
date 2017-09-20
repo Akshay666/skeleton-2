@@ -3,11 +3,12 @@ package controllers;
 import api.ReceiptResponse;
 import dao.TagsDao;
 import generated.tables.records.ReceiptsRecord;
+import generated.tables.records.TagsRecord;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
-
+import javax.validation.constraints.NotNull;
 import static java.util.stream.Collectors.toList;
 
 @Path("/tags")
@@ -20,11 +21,26 @@ public class TagsController {
         this.tagsDao = tagsDao;
     }
 
-    @Path("/{tag}")
+//    @Path("/{tag}")
+//    @PUT
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    public int updateTagEntry(@PathParam("tag") String tagName, Integer receipt_id ) {
+//        return tagsDao.insert(tagName, receipt_id);
+//    }
+
     @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
-    public int updateTagEntry(@PathParam("tag") String tagName, Integer receipt_id ) {
-        return tagsDao.insert(tagName, receipt_id);
+    @Path("{tag}")
+    public void toggleTag(@PathParam("tag") String tag, @NotNull int id) {
+        System.out.println("Trying to add tag:"+tag+"for receipt_id:"+id);
+        TagsRecord existing = tagsDao.getTag(id,tag);
+        if(existing == null){
+            tagsDao.insert(tag,id);
+        }else{
+            System.out.println("Deleting existing tag-record");
+            // tagsDao.removeTag(existing);
+            tagsDao.delete(tag, id);
+        }
+        return;
     }
 
     @Path("/{tag}")
